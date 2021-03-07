@@ -10,6 +10,7 @@ public class QuizCardBuilder {
     private JTextArea answer;
     private ArrayList<QuizCard> cardList;
     private JFrame frame;
+    private static int itemCard;
 
     public static void main(String[] args) {
         QuizCardBuilder builder = new QuizCardBuilder();
@@ -39,11 +40,45 @@ public class QuizCardBuilder {
         aScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         aScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
+        JButton newButton = new JButton("Новая карточка");
+        JButton saveButton = new JButton("Сохранить карточку");
+        JButton prevButton = new JButton("Предыдущая карточка");
         JButton nextButton = new JButton("Следующая карточка");
-        nextButton.addActionListener(listener -> {
-            QuizCard card = new QuizCard(question.getText(), answer.getText());
-            cardList.add(card);
+        prevButton.setEnabled(false);
+        nextButton.setEnabled(false);
+
+        newButton.addActionListener(listener -> {
             clearCard();
+            itemCard = cardList.size();
+            nextButton.setEnabled(false);
+        });
+        saveButton.addActionListener(listener -> {
+            if (cardList.size() == itemCard) {
+                QuizCard card = new QuizCard(question.getText(), answer.getText());
+                cardList.add(card);
+                clearCard();
+                prevButton.setEnabled(true);
+                itemCard = cardList.size();
+            } else {
+                cardList.get(itemCard).setAnswer(answer.getText());
+                cardList.get(itemCard).setQuestion(question.getText());
+            }
+        });
+        prevButton.addActionListener(listener -> {
+            itemCard--;
+            QuizCard card = cardList.get(itemCard);
+            showCard(card);
+            nextButton.setEnabled(true);
+            if (itemCard == 0) prevButton.setEnabled(false);
+
+        });
+        nextButton.addActionListener(listener -> {
+            cardList.get(itemCard).setAnswer(answer.getText());
+            cardList.get(itemCard).setQuestion(question.getText());
+            QuizCard card = cardList.get(++itemCard);
+            showCard(card);
+            prevButton.setEnabled(true);
+            if (cardList.size() == itemCard + 1 ) nextButton.setEnabled(false);
         });
 
         JLabel qLabel = new JLabel("Вопрос:");
@@ -53,6 +88,9 @@ public class QuizCardBuilder {
         mainPanel.add(qScroll);
         mainPanel.add(aLabel);
         mainPanel.add(aScroll);
+        mainPanel.add(newButton);
+        mainPanel.add(saveButton);
+        mainPanel.add(prevButton);
         mainPanel.add(nextButton);
 
         JMenuBar menuBar = new JMenuBar();
@@ -86,6 +124,11 @@ public class QuizCardBuilder {
         frame.getContentPane().add(BorderLayout.CENTER, mainPanel);
         frame.setSize(470, 600);
         frame.setVisible(true);
+    }
+
+    private void showCard(QuizCard card) {
+        question.setText(card.getQuestion());
+        answer.setText(card.getAnswer());
     }
 
     private void clearCard() {
