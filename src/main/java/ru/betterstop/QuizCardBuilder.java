@@ -138,18 +138,16 @@ public class QuizCardBuilder {
     }
 
     private void saveFile(File file) {
-        try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(file));
-            cardList.stream().forEach(x -> {
+        try(ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(file))) {
+            cardList.forEach(obj -> {
                 try {
-                    bw.write(x.getQuestion() + "/");
-                    bw.write(x.getAnswer() + "\n");
+                    os.writeObject(obj);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             });
-            bw.close();
         } catch (IOException e) {
+            System.out.println("Ошибка сохранения");
             e.printStackTrace();
         }
 
