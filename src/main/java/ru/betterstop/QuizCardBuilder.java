@@ -105,7 +105,7 @@ public class QuizCardBuilder {
         });
         saveMenuItem.addActionListener(listener -> {
             QuizCard quizCard = new QuizCard(question.getText(), answer.getText());
-            cardList.add(quizCard);
+           // cardList.add(quizCard);
 
             JFileChooser fileSave = new JFileChooser();
             fileSave.showSaveDialog(frame);
