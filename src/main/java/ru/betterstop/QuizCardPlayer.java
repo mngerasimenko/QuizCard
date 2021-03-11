@@ -1,6 +1,8 @@
 package ru.betterstop;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
@@ -59,7 +61,6 @@ public class QuizCardPlayer {
                prevButton.setEnabled(true);
            } else {
                question.setText("Больше нет карточек");
-              // nextButton.setEnabled(false);
            }
         });
         mainPanel.add(qScroll);
@@ -67,21 +68,20 @@ public class QuizCardPlayer {
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
         buttonPanel.add(prevButton);
         buttonPanel.add(nextButton);
-        //mainPanel.add(prevButton);
-        //mainPanel.add(nextButton);
-
 
         JMenuBar menuBar = new JMenuBar();
         JMenu fileMenu= new JMenu("Файл");
-        JMenuItem loadMenuItem = new JMenuItem("Загрузить набор карточек");
 
+        JMenuItem loadMenuItem = new JMenuItem("Загрузить набор карточек");
         loadMenuItem.addActionListener(listener -> {
             JFileChooser fileOpen = new JFileChooser();
+            FileNameExtensionFilter filter = new FileNameExtensionFilter("Набор карточек (*.qac)", "qac");
+            fileOpen.setFileFilter(filter);
             fileOpen.showOpenDialog(frame);
             loadFile(fileOpen.getSelectedFile());
         });
-
         fileMenu.add(loadMenuItem);
+
         menuBar.add(fileMenu);
         frame.setJMenuBar(menuBar);
 
@@ -94,15 +94,12 @@ public class QuizCardPlayer {
 
     private void loadFile(File file) {
         cardList = new ArrayList<QuizCard>();
-        Object card;
         try(FileInputStream fis = new FileInputStream(file); ObjectInputStream os = new ObjectInputStream(fis)) {
             while(fis.available() > 0) {
-
                     cardList.add((QuizCard) os.readObject());
-
             }
         } catch (EOFException e) {
-
+            System.out.println("End of file");
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -112,7 +109,6 @@ public class QuizCardPlayer {
     private void showNextCard(int direction) {
         if (currentCardId + direction >= 0 && currentCardId + direction < cardList.size()) {
             currentCardId += direction;
-
         }
         if (currentCardId == 0) prevButton.setEnabled(false);
         if (currentCardId == cardList.size() - 1) nextButton.setEnabled(false);

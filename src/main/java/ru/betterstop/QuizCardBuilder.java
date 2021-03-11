@@ -1,6 +1,7 @@
 package ru.betterstop;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
@@ -104,12 +105,16 @@ public class QuizCardBuilder {
             clearCard();
         });
         saveMenuItem.addActionListener(listener -> {
-            QuizCard quizCard = new QuizCard(question.getText(), answer.getText());
-           // cardList.add(quizCard);
-
+            //QuizCard quizCard = new QuizCard(question.getText(), answer.getText());
             JFileChooser fileSave = new JFileChooser();
+            FileNameExtensionFilter filter = new FileNameExtensionFilter("Набор карточек (*.qac)", "qac");
+            fileSave.setFileFilter(filter);
             fileSave.showSaveDialog(frame);
-            saveFile(fileSave.getSelectedFile());
+            String fileName = fileSave.getSelectedFile().getAbsolutePath();
+            if (!fileName.endsWith(".qac")) {
+                fileName += ".qac";
+            }
+            saveFile(new File(fileName));
         });
         exitMenuItem.addActionListener(listener -> {
             frame.dispose();
