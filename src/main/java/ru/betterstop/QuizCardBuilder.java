@@ -98,7 +98,7 @@ public class QuizCardBuilder {
         JMenu fileMenu = new JMenu("Файл");
         JMenuItem newMenuItem = new JMenuItem("Создать новый набор карточек");
         JMenuItem saveMenuItem = new JMenuItem("Сахранить");
-        JMenuItem exitMenuItem = new JMenuItem("Выход");
+        JMenuItem exitMenuItem = new JMenuItem("Закрыть");
 
         newMenuItem.addActionListener(listener -> {
             cardList.clear();
@@ -117,6 +117,7 @@ public class QuizCardBuilder {
             saveFile(new File(fileName));
         });
         exitMenuItem.addActionListener(listener -> {
+            frame.setVisible(false);
             frame.dispose();
         });
 
@@ -125,8 +126,10 @@ public class QuizCardBuilder {
         fileMenu.add(exitMenuItem);
         menuBar.add(fileMenu);
         frame.setJMenuBar(menuBar);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().add(BorderLayout.CENTER, mainPanel);
+
+        frame.setResizable(false);
+        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         frame.setSize(470, 600);
         frame.setVisible(true);
     }

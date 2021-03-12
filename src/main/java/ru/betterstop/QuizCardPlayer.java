@@ -3,6 +3,7 @@ package ru.betterstop;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.plaf.basic.BasicBorders;
 import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ public class QuizCardPlayer {
     private JFrame frame;
     private JButton prevButton;
     private JButton nextButton;
+    private JButton showAnswerButton;
 
     private boolean isShowAnswer;
 
@@ -30,7 +32,7 @@ public class QuizCardPlayer {
         JPanel mainPanel = new JPanel();
         Font bigFont = new Font("sanserif", Font.BOLD, 24);
 
-        question = new JTextArea(10, 20);
+        question = new JTextArea(6, 20);
         question.setFont(bigFont);
         question.setLineWrap(true);
         question.setEditable(false);
@@ -41,7 +43,7 @@ public class QuizCardPlayer {
 
         prevButton = new JButton("Предыдущая карточка");
         prevButton.setEnabled(false);
-        prevButton.addActionListener(listner -> {
+        prevButton.addActionListener(listener -> {
             if (currentCardId != 0) {
 
                 showNextCard(-1);
@@ -52,10 +54,9 @@ public class QuizCardPlayer {
             }
         });
 
-
         nextButton = new JButton("Следующая карточка");
         nextButton.setEnabled(false);
-        nextButton.addActionListener(listner -> {
+        nextButton.addActionListener(listener -> {
            if (currentCardId < cardList.size()) {
                showNextCard(1);
                prevButton.setEnabled(true);
@@ -63,14 +64,28 @@ public class QuizCardPlayer {
                question.setText("Больше нет карточек");
            }
         });
+
+        showAnswerButton = new JButton("Показать ответ");
+        showAnswerButton.setEnabled(false);
+        showAnswerButton.addActionListener(listener -> {
+            if (currentCard != null) {
+                question.setText("");
+                question.setText(currentCard.getAnswer());
+            }
+        });
+
         mainPanel.add(qScroll);
+
         JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
         buttonPanel.add(prevButton);
         buttonPanel.add(nextButton);
+        buttonPanel.add(showAnswerButton);
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
+        mainPanel.add(buttonPanel);
 
         JMenuBar menuBar = new JMenuBar();
         JMenu fileMenu= new JMenu("Файл");
+
 
         JMenuItem loadMenuItem = new JMenuItem("Загрузить набор карточек");
         loadMenuItem.addActionListener(listener -> {
@@ -82,13 +97,27 @@ public class QuizCardPlayer {
         });
         fileMenu.add(loadMenuItem);
 
+        JMenuItem builderCardItem = new JMenuItem("Создать набор Карточек");
+        builderCardItem.addActionListener(listener -> {
+            QuizCardBuilder builder = new QuizCardBuilder();
+            builder.build();
+        });
+        fileMenu.add(builderCardItem);
+
+        JMenuItem exitMenuItem = new JMenuItem("Выход");
+        exitMenuItem.addActionListener(listener -> {
+            frame.dispose();
+        });
+        fileMenu.add(exitMenuItem);
+
         menuBar.add(fileMenu);
         frame.setJMenuBar(menuBar);
 
         frame.getContentPane().add(BorderLayout.CENTER, mainPanel);
-        frame.getContentPane().add(BorderLayout.EAST,buttonPanel);
-        frame.setSize(650, 500);
+        //frame.getContentPane().add(BorderLayout.EAST,buttonPanel);
+        frame.setSize(650, 400);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setResizable(false);
         frame.setVisible(true);
     }
 
@@ -105,6 +134,7 @@ public class QuizCardPlayer {
         }
         showNextCard(0);
         nextButton.setEnabled(true);
+        showAnswerButton.setEnabled(true);
     }
     private void showNextCard(int direction) {
         if (currentCardId + direction >= 0 && currentCardId + direction < cardList.size()) {
@@ -114,6 +144,6 @@ public class QuizCardPlayer {
         if (currentCardId == cardList.size() - 1) nextButton.setEnabled(false);
 
         currentCard = cardList.get(currentCardId);
-        question.setText(currentCard.getQuestion() + "\n" + currentCard.getAnswer());
+        question.setText(currentCard.getQuestion());
     }
 }
