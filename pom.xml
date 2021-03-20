@@ -42,7 +42,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>ru.betterstop.QuizCardBuilder</mainClass>
+                            <mainClass>ru.betterstop.quizcard.QuizCardBuilder</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

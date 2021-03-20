@@ -1,4 +1,4 @@
-package ru.betterstop;
+package ru.betterstop.quizcard;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
