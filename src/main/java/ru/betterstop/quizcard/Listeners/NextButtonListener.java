@@ -1,6 +1,9 @@
 package ru.betterstop.quizcard.Listeners;
 
+import ru.betterstop.quizcard.QuizCard;
 import ru.betterstop.quizcard.QuizCardPlayer;
+
+import java.awt.*;
 import java.awt.event.ActionEvent;
 
 public class NextButtonListener extends FormPlayListeners {
@@ -11,12 +14,8 @@ public class NextButtonListener extends FormPlayListeners {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (play.getCurrentCardId() < play.getCardList().size()) {
-            play.showNextCard(1);
-            play.getPrevButton().setEnabled(true);
-        } else {
-            play.getQuestion().setText("Больше нет карточек");
-        }
+        play.getAnswer().setForeground(Color.BLACK);
+        play.showCard();
         play.getCheckAnswerButton().setEnabled(true);
         play.getAnswer().setText("");
     }

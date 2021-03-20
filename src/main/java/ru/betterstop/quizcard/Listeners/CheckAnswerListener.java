@@ -24,12 +24,13 @@ public class CheckAnswerListener extends FormPlayListeners {
         qTextArea.setText(card.getQuestion());
 
         if (card.getAnswer().equals(answer)) {
-            card.setCountRight(1);
+            card.setCountRight(card.getCountRight() + 1);
             aTextArea.setForeground(Color.GREEN);
             qTextArea.setText(qTextArea.getText() + "\nПравильно!");
+            play.getCheckAnswerButton().setEnabled(false);
 
         } else {
-            card.setCountRight(-1);
+            card.setCountRight(0);
             aTextArea.setForeground(Color.RED);
             qTextArea.setText(qTextArea.getText() + "\nОшибка!");
         }

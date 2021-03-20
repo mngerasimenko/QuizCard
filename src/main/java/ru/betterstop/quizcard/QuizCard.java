@@ -31,6 +31,6 @@ public class QuizCard implements Serializable {
     }
 
     public void setCountRight(int right) {
-        this.countRight = this.countRight + right;
+        this.countRight = right;
     }
 }

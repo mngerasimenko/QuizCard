@@ -4,6 +4,7 @@ import ru.betterstop.quizcard.Listeners.CheckAnswerListener;
 import ru.betterstop.quizcard.Listeners.NextButtonListener;
 import ru.betterstop.quizcard.Listeners.PrevButtonListener;
 import ru.betterstop.quizcard.Listeners.ShowAnswerListener;
+import ru.betterstop.quizcard.setting.Setting;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -21,12 +22,11 @@ public class QuizCardPlayer {
     private QuizCard currentCard;
     private int currentCardId;
     private JFrame frame;
-    private JButton prevButton;
+    //private JButton prevButton;
     private JButton nextButton;
     private JButton showAnswerButton;
     private JButton checkAnswerButton;
 
-    private boolean isShowAnswer;
 
     public static void main(String[] args) {
         QuizCardPlayer play = new QuizCardPlayer();
@@ -50,13 +50,12 @@ public class QuizCardPlayer {
         answer = new JTextArea(3, 25);
         answer.setFont(bigFont);
         answer.setLineWrap(true);
-        //answer.setEditable(false);
 
         JScrollPane aScroll = new JScrollPane(answer);
         aScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         aScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
-        prevButton = createButton("Предыдущая карточка", new PrevButtonListener(this));
+        //prevButton = createButton("Предыдущая карточка", new PrevButtonListener(this));
         nextButton = createButton("Следующая карточка", new NextButtonListener(this));
         checkAnswerButton = createButton("Проверить ответ", new CheckAnswerListener(this));
         showAnswerButton = createButton("Показать ответ", new ShowAnswerListener(this));
@@ -66,8 +65,7 @@ public class QuizCardPlayer {
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(checkAnswerButton);
-        checkAnswerButton.setEnabled(true);
-        buttonPanel.add(prevButton);
+        //buttonPanel.add(prevButton);
         buttonPanel.add(nextButton);
         buttonPanel.add(showAnswerButton);
 
@@ -102,8 +100,10 @@ public class QuizCardPlayer {
         fileMenu.add(exitMenuItem);
 
         menuBar.add(fileMenu);
-        frame.setJMenuBar(menuBar);
 
+
+
+        frame.setJMenuBar(menuBar);
         frame.getContentPane().add(BorderLayout.CENTER, mainPanel);
         //frame.getContentPane().add(BorderLayout.EAST,buttonPanel);
         frame.setSize(650, 400);
@@ -123,25 +123,45 @@ public class QuizCardPlayer {
         cardList = new ArrayList<QuizCard>();
         try(FileInputStream fis = new FileInputStream(file); ObjectInputStream os = new ObjectInputStream(fis)) {
             while(fis.available() > 0) {
-                    cardList.add((QuizCard) os.readObject());
+                    QuizCard card = (QuizCard) os.readObject();
+                    cardList.add(card);
             }
         } catch (EOFException e) {
             System.out.println("End of file");
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-        showNextCard(0);
+        currentCardId = 0;
+        currentCard = cardList.get(currentCardId);
+        question.setText(currentCard.getQuestion());
         nextButton.setEnabled(true);
         showAnswerButton.setEnabled(true);
+        checkAnswerButton.setEnabled(true);
     }
-    public void showNextCard(int direction) {
-        if (currentCardId + direction >= 0 && currentCardId + direction < cardList.size()) {
-            currentCardId += direction;
-        }
-        if (currentCardId == 0) prevButton.setEnabled(false);
-        if (currentCardId == cardList.size() - 1) nextButton.setEnabled(false);
 
-        currentCard = cardList.get(currentCardId);
+    public void showCard() {
+        int count = cardList.size();
+        boolean finish = true;
+        for(int i = 0; i < count; i++) {
+            if (cardList.get(i).getCountRight() < Setting.COUNT_RIGHT) finish = false;
+        }
+        if (finish) {
+            question.setText("Вы закончили все карточки в наборе!!!");
+            nextButton.setEnabled(false);
+            showAnswerButton.setEnabled(false);
+            checkAnswerButton.setEnabled(false);
+            return;
+        }
+
+        int id = (currentCardId == cardList.size() - 1) ? 0 : currentCardId + 1;
+
+        for(int i = id; i < count; i++) {
+            if (cardList.get(i).getCountRight() < Setting.COUNT_RIGHT) {
+                currentCardId = i;
+                currentCard = cardList.get(i);
+                break;
+            }
+        }
         question.setText(currentCard.getQuestion());
     }
 
@@ -165,9 +185,9 @@ public class QuizCardPlayer {
         return cardList;
     }
 
-    public JButton getPrevButton() {
-        return prevButton;
-    }
+//    public JButton getPrevButton() {
+//        return prevButton;
+//    }
 
     public JButton getNextButton() {
         return nextButton;
@@ -175,5 +195,17 @@ public class QuizCardPlayer {
 
     public JButton getCheckAnswerButton() {
         return checkAnswerButton;
+    }
+
+    public void setQuestion(JTextArea question) {
+        this.question = question;
+    }
+
+    public void setCurrentCard(QuizCard currentCard) {
+        this.currentCard = currentCard;
+    }
+
+    public void setCurrentCardId(int currentCardId) {
+        this.currentCardId = currentCardId;
     }
 }

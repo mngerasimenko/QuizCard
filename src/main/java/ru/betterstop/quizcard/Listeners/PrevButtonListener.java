@@ -15,7 +15,7 @@ public class PrevButtonListener extends FormPlayListeners {
 
         if (play.getCurrentCardId() != 0) {
 
-            play.showNextCard(-1);
+            play.showCard();
             play.getNextButton().setEnabled(true);
         } else {
             //question.setText("Больше нет карточек");
