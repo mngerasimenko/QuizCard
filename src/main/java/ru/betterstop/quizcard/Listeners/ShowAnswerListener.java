@@ -13,7 +13,8 @@ public class ShowAnswerListener extends FormPlayListeners {
     public void actionPerformed(ActionEvent e) {
         if (play.getCurrentCard() != null) {
                 play.getQuestion().setText("");
-            play.getQuestion().setText(play.getCurrentCard().getAnswer());
+                play.getQuestion().setText(play.getCurrentCard().getAnswer());
+                play.getCurrentCard().setCountRight(-1);
             }
         play.getCheckAnswerButton().setEnabled(false);
         play.getAnswer().setText("");

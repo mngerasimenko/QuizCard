@@ -1,15 +1,11 @@
 package ru.betterstop.quizcard;
 
-import ru.betterstop.quizcard.Listeners.CheckAnswerListener;
-import ru.betterstop.quizcard.Listeners.NextButtonListener;
-import ru.betterstop.quizcard.Listeners.PrevButtonListener;
-import ru.betterstop.quizcard.Listeners.ShowAnswerListener;
+import ru.betterstop.quizcard.Listeners.*;
 import ru.betterstop.quizcard.setting.Setting;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.ArrayList;
@@ -26,6 +22,8 @@ public class QuizCardPlayer {
     private JButton nextButton;
     private JButton showAnswerButton;
     private JButton checkAnswerButton;
+    private boolean isOk = false;
+    private boolean finish = false;
 
 
     public static void main(String[] args) {
@@ -50,6 +48,7 @@ public class QuizCardPlayer {
         answer = new JTextArea(3, 25);
         answer.setFont(bigFont);
         answer.setLineWrap(true);
+        answer.addKeyListener(new AnswerKeyListener(this));
 
         JScrollPane aScroll = new JScrollPane(answer);
         aScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -101,8 +100,6 @@ public class QuizCardPlayer {
 
         menuBar.add(fileMenu);
 
-
-
         frame.setJMenuBar(menuBar);
         frame.getContentPane().add(BorderLayout.CENTER, mainPanel);
         //frame.getContentPane().add(BorderLayout.EAST,buttonPanel);
@@ -139,18 +136,22 @@ public class QuizCardPlayer {
         checkAnswerButton.setEnabled(true);
     }
 
-    public void showCard() {
+    public boolean showCard() {
         int count = cardList.size();
-        boolean finish = true;
+        finish = true;
         for(int i = 0; i < count; i++) {
-            if (cardList.get(i).getCountRight() < Setting.COUNT_RIGHT) finish = false;
+            if (cardList.get(i).getCountRight() < Setting.COUNT_RIGHT) {
+                finish = false;
+                break;
+            }
         }
         if (finish) {
             question.setText("Вы закончили все карточки в наборе!!!");
             nextButton.setEnabled(false);
             showAnswerButton.setEnabled(false);
             checkAnswerButton.setEnabled(false);
-            return;
+            answer.setEditable(false);
+            return false;
         }
 
         int id = (currentCardId == cardList.size() - 1) ? 0 : currentCardId + 1;
@@ -161,8 +162,18 @@ public class QuizCardPlayer {
                 currentCard = cardList.get(i);
                 break;
             }
+            if (i == count - 1) {
+                for (int j = 0; j < count; j++) {
+                    if (cardList.get(j).getCountRight() < Setting.COUNT_RIGHT) {
+                        currentCardId = j;
+                        currentCard = cardList.get(j);
+                        break;
+                    }
+                }
+            }
         }
         question.setText(currentCard.getQuestion());
+        return true;
     }
 
     public JTextArea getQuestion() {
@@ -207,5 +218,21 @@ public class QuizCardPlayer {
 
     public void setCurrentCardId(int currentCardId) {
         this.currentCardId = currentCardId;
+    }
+
+    public boolean isOk() {
+        return isOk;
+    }
+
+    public void setOk(boolean ok) {
+        isOk = ok;
+    }
+
+    public boolean isFinish() {
+        return finish;
+    }
+
+    public void setFinish(boolean finish) {
+        this.finish = finish;
     }
 }

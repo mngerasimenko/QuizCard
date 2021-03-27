@@ -1,6 +1,5 @@
 package ru.betterstop.quizcard.Listeners;
 
-import ru.betterstop.quizcard.QuizCard;
 import ru.betterstop.quizcard.QuizCardPlayer;
 
 import java.awt.*;
@@ -14,9 +13,14 @@ public class NextButtonListener extends FormPlayListeners {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        nextCard(play);
+    }
+
+    public static void nextCard(QuizCardPlayer play) {
         play.getAnswer().setForeground(Color.BLACK);
-        play.showCard();
-        play.getCheckAnswerButton().setEnabled(true);
+        if (play.showCard()) play.getCheckAnswerButton().setEnabled(true);
         play.getAnswer().setText("");
+        play.getAnswer().requestFocus();
+        play.setOk(false);
     }
 }
