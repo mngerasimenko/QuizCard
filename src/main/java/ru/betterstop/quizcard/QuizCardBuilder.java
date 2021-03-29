@@ -1,17 +1,23 @@
 package ru.betterstop.quizcard;
 
+import ru.betterstop.quizcard.Listeners.LoadCardListener;
+import ru.betterstop.quizcard.Listeners.SaveCardListener;
+
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.io.*;
 import java.util.ArrayList;
 
 public class QuizCardBuilder {
+
+    private ArrayList<QuizCard> cardList;
+    private static int itemCard;
+    private JFrame frame;
     private JTextArea question;
     private JTextArea answer;
-    private ArrayList<QuizCard> cardList;
-    private JFrame frame;
-    private static int itemCard;
+    private JButton nextButton;
+    private JButton prevButton;
+    private JButton newButton;
+    private JButton saveButton;
 
     public static void main(String[] args) {
         QuizCardBuilder builder = new QuizCardBuilder();
@@ -21,6 +27,15 @@ public class QuizCardBuilder {
     public void build() {
         cardList = new ArrayList<QuizCard>();
         frame = new JFrame("Создание карточек с вопросами");
+        frame.getContentPane().add(BorderLayout.CENTER, createPanel());
+        frame.setJMenuBar(createMenu());
+        frame.setResizable(false);
+        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        frame.setSize(470, 600);
+        frame.setVisible(true);
+    }
+
+    private JPanel createPanel() {
         JPanel mainPanel = new JPanel();
         Font bigFont = new Font("sanserif", Font.BOLD, 24);
         question = new JTextArea(6, 20);
@@ -41,10 +56,28 @@ public class QuizCardBuilder {
         aScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         aScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
-        JButton newButton = new JButton("Новая карточка");
-        JButton saveButton = new JButton("Сохранить карточку");
-        JButton prevButton = new JButton("Предыдущая карточка");
-        JButton nextButton = new JButton("Следующая карточка");
+        initButton();
+
+        JLabel qLabel = new JLabel("Вопрос:");
+        JLabel aLabel = new JLabel("Ответ:");
+
+        mainPanel.add(qLabel);
+        mainPanel.add(qScroll);
+        mainPanel.add(aLabel);
+        mainPanel.add(aScroll);
+        mainPanel.add(newButton);
+        mainPanel.add(saveButton);
+        mainPanel.add(prevButton);
+        mainPanel.add(nextButton);
+
+        return mainPanel;
+    }
+
+    private void initButton() {
+        newButton = new JButton("Новая карточка");
+        saveButton = new JButton("Сохранить карточку");
+        prevButton = new JButton("Предыдущая карточка");
+        nextButton = new JButton("Следующая карточка");
         prevButton.setEnabled(false);
         nextButton.setEnabled(false);
 
@@ -79,59 +112,37 @@ public class QuizCardBuilder {
             QuizCard card = cardList.get(++itemCard);
             showCard(card);
             prevButton.setEnabled(true);
-            if (cardList.size() == itemCard + 1 ) nextButton.setEnabled(false);
+            if (cardList.size() == itemCard + 1) nextButton.setEnabled(false);
         });
+    }
 
-        JLabel qLabel = new JLabel("Вопрос:");
-        JLabel aLabel = new JLabel("Ответ:");
-
-        mainPanel.add(qLabel);
-        mainPanel.add(qScroll);
-        mainPanel.add(aLabel);
-        mainPanel.add(aScroll);
-        mainPanel.add(newButton);
-        mainPanel.add(saveButton);
-        mainPanel.add(prevButton);
-        mainPanel.add(nextButton);
-
+    private JMenuBar createMenu() {
         JMenuBar menuBar = new JMenuBar();
         JMenu fileMenu = new JMenu("Файл");
         JMenuItem newMenuItem = new JMenuItem("Создать новый набор карточек");
-        JMenuItem saveMenuItem = new JMenuItem("Сахранить");
+        JMenuItem loadMenuItem = new JMenuItem("Загрузить набор карточек");
+        JMenuItem saveMenuItem = new JMenuItem("Сахранить набор карточек");
         JMenuItem exitMenuItem = new JMenuItem("Закрыть");
 
         newMenuItem.addActionListener(listener -> {
             cardList.clear();
-            clearCard();
+            initForm();
         });
-        saveMenuItem.addActionListener(listener -> {
-            //QuizCard quizCard = new QuizCard(question.getText(), answer.getText());
-            JFileChooser fileSave = new JFileChooser();
-            FileNameExtensionFilter filter = new FileNameExtensionFilter("Набор карточек (*.qac)", "qac");
-            fileSave.setFileFilter(filter);
-            fileSave.showSaveDialog(frame);
-            String fileName = fileSave.getSelectedFile().getAbsolutePath();
-            if (!fileName.endsWith(".qac")) {
-                fileName += ".qac";
-            }
-            saveFile(new File(fileName));
-        });
+
+        loadMenuItem.addActionListener(new LoadCardListener(this));
+        saveMenuItem.addActionListener(new SaveCardListener(frame, cardList));
+
         exitMenuItem.addActionListener(listener -> {
             frame.setVisible(false);
             frame.dispose();
         });
 
         fileMenu.add(newMenuItem);
+        fileMenu.add(loadMenuItem);
         fileMenu.add(saveMenuItem);
         fileMenu.add(exitMenuItem);
         menuBar.add(fileMenu);
-        frame.setJMenuBar(menuBar);
-        frame.getContentPane().add(BorderLayout.CENTER, mainPanel);
-
-        frame.setResizable(false);
-        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        frame.setSize(470, 600);
-        frame.setVisible(true);
+        return menuBar;
     }
 
     private void showCard(QuizCard card) {
@@ -145,19 +156,23 @@ public class QuizCardBuilder {
         question.requestFocus();
     }
 
-    private void saveFile(File file) {
-        try(ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(file))) {
-            cardList.forEach(obj -> {
-                try {
-                    os.writeObject(obj);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
-        } catch (IOException e) {
-            System.out.println("Ошибка сохранения");
-            e.printStackTrace();
+    public void initForm() {
+        nextButton.setEnabled(false);
+        clearCard();
+        if (cardList.size() != 0) {
+            question.setText(cardList.get(0).getQuestion());
+            answer.setText(cardList.get(0).getAnswer());
+            nextButton.setEnabled(true);
         }
+        itemCard = 0;
+        prevButton.setEnabled(false);
+    }
 
+    public JFrame getFrame() {
+        return frame;
+    }
+
+    public ArrayList<QuizCard> getCardList() {
+        return cardList;
     }
 }
