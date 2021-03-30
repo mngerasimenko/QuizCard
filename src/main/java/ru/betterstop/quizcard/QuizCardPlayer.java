@@ -1,30 +1,21 @@
 package ru.betterstop.quizcard;
 
 import ru.betterstop.quizcard.Listeners.*;
-import ru.betterstop.quizcard.setting.Setting;
+import ru.betterstop.quizcard.settings.Setting;
 
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.io.*;
-import java.util.ArrayList;
+import java.util.Random;
 
-public class QuizCardPlayer {
+public class QuizCardPlayer extends CardWorker {
 
-    private JTextArea question;
-    private JTextArea answer;
-    private ArrayList<QuizCard> cardList;
     private QuizCard currentCard;
     private int currentCardId;
-    private JFrame frame;
-    //private JButton prevButton;
     private JButton nextButton;
     private JButton showAnswerButton;
     private JButton checkAnswerButton;
     private boolean isOk = false;
-    private boolean finish = false;
-
+    //private boolean finish = false;
 
     public static void main(String[] args) {
         QuizCardPlayer play = new QuizCardPlayer();
@@ -76,13 +67,7 @@ public class QuizCardPlayer {
 
         JMenuItem loadMenuItem = new JMenuItem("Загрузить набор карточек");
 
-        loadMenuItem.addActionListener(listener -> {
-            JFileChooser fileOpen = new JFileChooser();
-            FileNameExtensionFilter filter = new FileNameExtensionFilter("Набор карточек (*.qac)", "qac");
-            fileOpen.setFileFilter(filter);
-            fileOpen.showOpenDialog(frame);
-            loadFile(fileOpen.getSelectedFile());
-        });
+        loadMenuItem.addActionListener(new LoadCardListener(this));
         fileMenu.add(loadMenuItem);
 
         JMenuItem builderCardItem = new JMenuItem("Создать набор Карточек");
@@ -109,34 +94,38 @@ public class QuizCardPlayer {
         frame.setVisible(true);
     }
 
-    private JButton createButton(String buttonName, ActionListener listener) {
-        JButton button = new JButton(buttonName);
-        button.setEnabled(false);
-        button.addActionListener(listener);
-        return button;
-    }
 
-    private void loadFile(File file) {
-        cardList = new ArrayList<QuizCard>();
-        try(FileInputStream fis = new FileInputStream(file); ObjectInputStream os = new ObjectInputStream(fis)) {
-            while(fis.available() > 0) {
-                    QuizCard card = (QuizCard) os.readObject();
-                    cardList.add(card);
-            }
-        } catch (EOFException e) {
-            System.out.println("End of file");
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+
+    public void initForm() {
+        nextButton.setEnabled(false);
+        showAnswerButton.setEnabled(false);
+        checkAnswerButton.setEnabled(false);
+        if (cardList.size() != 0) {
+            currentCardId = 0;
+            currentCard = cardList.get(currentCardId);
+            question.setText(currentCard.getQuestion());
+            nextButton.setEnabled(true);
+            showAnswerButton.setEnabled(true);
+            checkAnswerButton.setEnabled(true);
         }
-        currentCardId = 0;
-        currentCard = cardList.get(currentCardId);
-        question.setText(currentCard.getQuestion());
-        nextButton.setEnabled(true);
-        showAnswerButton.setEnabled(true);
-        checkAnswerButton.setEnabled(true);
     }
 
     public boolean showCard() {
+        if (cardList.size() == 0) {
+            question.setText(Setting.FINISH);
+            nextButton.setEnabled(false);
+            showAnswerButton.setEnabled(false);
+            checkAnswerButton.setEnabled(false);
+            answer.setEditable(false);
+            return false;
+        }
+        currentCardId = new Random().nextInt(cardList.size());
+        currentCard = cardList.get(currentCardId);
+        question.setText(currentCard.getQuestion());
+        return true;
+    }
+
+ /*   public boolean showCard() {
         int count = cardList.size();
         finish = true;
         for(int i = 0; i < count; i++) {
@@ -175,10 +164,7 @@ public class QuizCardPlayer {
         question.setText(currentCard.getQuestion());
         return true;
     }
-
-    public JTextArea getQuestion() {
-        return question;
-    }
+*/
 
     public JTextArea getAnswer() {
         return answer;
@@ -192,24 +178,12 @@ public class QuizCardPlayer {
         return currentCardId;
     }
 
-    public ArrayList<QuizCard> getCardList() {
-        return cardList;
-    }
-
-//    public JButton getPrevButton() {
-//        return prevButton;
-//    }
-
     public JButton getNextButton() {
         return nextButton;
     }
 
     public JButton getCheckAnswerButton() {
         return checkAnswerButton;
-    }
-
-    public void setQuestion(JTextArea question) {
-        this.question = question;
     }
 
     public void setCurrentCard(QuizCard currentCard) {
@@ -228,11 +202,4 @@ public class QuizCardPlayer {
         isOk = ok;
     }
 
-    public boolean isFinish() {
-        return finish;
-    }
-
-    public void setFinish(boolean finish) {
-        this.finish = finish;
-    }
 }

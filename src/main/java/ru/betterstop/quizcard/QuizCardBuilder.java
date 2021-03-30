@@ -7,13 +7,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class QuizCardBuilder {
+public class QuizCardBuilder extends CardWorker {
 
-    private ArrayList<QuizCard> cardList;
     private static int itemCard;
-    private JFrame frame;
-    private JTextArea question;
-    private JTextArea answer;
     private JButton nextButton;
     private JButton prevButton;
     private JButton newButton;
@@ -168,11 +164,4 @@ public class QuizCardBuilder {
         prevButton.setEnabled(false);
     }
 
-    public JFrame getFrame() {
-        return frame;
-    }
-
-    public ArrayList<QuizCard> getCardList() {
-        return cardList;
-    }
 }

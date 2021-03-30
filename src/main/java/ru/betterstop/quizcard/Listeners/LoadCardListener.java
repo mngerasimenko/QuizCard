@@ -1,7 +1,7 @@
 package ru.betterstop.quizcard.Listeners;
 
+import ru.betterstop.quizcard.CardWorker;
 import ru.betterstop.quizcard.QuizCard;
-import ru.betterstop.quizcard.QuizCardBuilder;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -12,15 +12,16 @@ import java.util.ArrayList;
 
 public class LoadCardListener implements ActionListener {
 
-    QuizCardBuilder builder;
+    CardWorker cardWorker;
 
-    public LoadCardListener(QuizCardBuilder builder) {
-        this.builder = builder;
+    public LoadCardListener(CardWorker cardWorker) {
+        this.cardWorker = cardWorker;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        JFrame frame = builder.getFrame();
+
+        JFrame frame = cardWorker.getFrame();
         JFileChooser fileOpen = new JFileChooser();
         FileNameExtensionFilter filter = new FileNameExtensionFilter("Набор карточек (*.qac)", "qac");
         fileOpen.setFileFilter(filter);
@@ -30,8 +31,8 @@ public class LoadCardListener implements ActionListener {
     }
 
     private void loadFile(File file) {
-        ArrayList<QuizCard> cardList = builder.getCardList();
-        cardList.clear();
+        ArrayList<QuizCard> cardList = cardWorker.getCardList();
+        if (!cardList.isEmpty()) cardList.clear();
         try (FileInputStream fis = new FileInputStream(file); ObjectInputStream os = new ObjectInputStream(fis)) {
             while (fis.available() > 0) {
                 QuizCard card = (QuizCard) os.readObject();
@@ -42,6 +43,6 @@ public class LoadCardListener implements ActionListener {
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-        builder.initForm();
+        cardWorker.initForm();
     }
 }
