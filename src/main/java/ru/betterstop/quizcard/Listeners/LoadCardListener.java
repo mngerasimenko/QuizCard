@@ -2,6 +2,7 @@ package ru.betterstop.quizcard.Listeners;
 
 import ru.betterstop.quizcard.CardWorker;
 import ru.betterstop.quizcard.QuizCard;
+import ru.betterstop.quizcard.settings.Setting;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -23,7 +24,7 @@ public class LoadCardListener implements ActionListener {
 
         JFrame frame = cardWorker.getFrame();
         JFileChooser fileOpen = new JFileChooser();
-        FileNameExtensionFilter filter = new FileNameExtensionFilter("Набор карточек (*.qac)", "qac");
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(Setting.FILE_FILTER_NAME, Setting.FILE_FILTER_EXT);
         fileOpen.setFileFilter(filter);
         if (fileOpen.showOpenDialog(frame) == 0) {
             loadFile(fileOpen.getSelectedFile());

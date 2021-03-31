@@ -23,78 +23,57 @@ public class QuizCardPlayer extends CardWorker {
     }
 
     public void checkingAnswers() {
-        frame = new JFrame("Карточки с вопросами");
+        frame = new JFrame(Setting.FORM_PLAY_NAME);
         JPanel mainPanel = new JPanel();
-        Font bigFont = new Font("sanserif", Font.BOLD, 24);
 
-        question = new JTextArea(3, 25);
-        question.setFont(bigFont);
-        question.setLineWrap(true);
+        nextButton = createButton(Setting.BUTTON_NEXT, new NextButtonListener(this));
+        checkAnswerButton = createButton(Setting.BUTTON_CHECK, new CheckAnswerListener(this));
+        showAnswerButton = createButton(Setting.BUTTON_SHOW, new ShowAnswerListener(this));
+
+        mainPanel.add(initTextArea(question, 3,25));
+        mainPanel.add(initTextArea(answer, 3,25));
         question.setEditable(false);
-
-        JScrollPane qScroll = new JScrollPane(question);
-        qScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        qScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-
-        answer = new JTextArea(3, 25);
-        answer.setFont(bigFont);
-        answer.setLineWrap(true);
         answer.addKeyListener(new AnswerKeyListener(this));
-
-        JScrollPane aScroll = new JScrollPane(answer);
-        aScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        aScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-
-        //prevButton = createButton("Предыдущая карточка", new PrevButtonListener(this));
-        nextButton = createButton("Следующая карточка", new NextButtonListener(this));
-        checkAnswerButton = createButton("Проверить ответ", new CheckAnswerListener(this));
-        showAnswerButton = createButton("Показать ответ", new ShowAnswerListener(this));
-
-        mainPanel.add(qScroll);
-        mainPanel.add(aScroll);
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(checkAnswerButton);
-        //buttonPanel.add(prevButton);
         buttonPanel.add(nextButton);
         buttonPanel.add(showAnswerButton);
 
-        //buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
         mainPanel.add(buttonPanel);
+        frame.setJMenuBar(createMenu());
+        frame.getContentPane().add(BorderLayout.CENTER, mainPanel);
+        frame.setSize(Setting.FORM_PLAY_WIDTH, Setting.FORM_PLAY_HEIGHT);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setResizable(false);
+        frame.setVisible(true);
+    }
+
+    private JMenuBar createMenu() {
 
         JMenuBar menuBar = new JMenuBar();
-        JMenu fileMenu= new JMenu("Файл");
+        JMenu fileMenu= new JMenu(Setting.MENU_FILE);
 
-        JMenuItem loadMenuItem = new JMenuItem("Загрузить набор карточек");
-
+        JMenuItem loadMenuItem = new JMenuItem(Setting.MENU_LOAD);
         loadMenuItem.addActionListener(new LoadCardListener(this));
         fileMenu.add(loadMenuItem);
 
-        JMenuItem builderCardItem = new JMenuItem("Создать набор Карточек");
+        JMenuItem builderCardItem = new JMenuItem(Setting.MENU_CREATE);
         builderCardItem.addActionListener(listener -> {
             QuizCardBuilder builder = new QuizCardBuilder();
             builder.build();
         });
         fileMenu.add(builderCardItem);
 
-        JMenuItem exitMenuItem = new JMenuItem("Выход");
+        JMenuItem exitMenuItem = new JMenuItem(Setting.MENU_EXIT);
         exitMenuItem.addActionListener(listener -> {
             frame.dispose();
         });
         fileMenu.add(exitMenuItem);
 
         menuBar.add(fileMenu);
-
-        frame.setJMenuBar(menuBar);
-        frame.getContentPane().add(BorderLayout.CENTER, mainPanel);
-        //frame.getContentPane().add(BorderLayout.EAST,buttonPanel);
-        frame.setSize(650, 400);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setResizable(false);
-        frame.setVisible(true);
+        return menuBar;
     }
-
-
 
     public void initForm() {
         nextButton.setEnabled(false);
@@ -184,14 +163,6 @@ public class QuizCardPlayer extends CardWorker {
 
     public JButton getCheckAnswerButton() {
         return checkAnswerButton;
-    }
-
-    public void setCurrentCard(QuizCard currentCard) {
-        this.currentCard = currentCard;
-    }
-
-    public void setCurrentCardId(int currentCardId) {
-        this.currentCardId = currentCardId;
     }
 
     public boolean isOk() {

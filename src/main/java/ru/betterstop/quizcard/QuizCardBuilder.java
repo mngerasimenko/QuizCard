@@ -2,10 +2,10 @@ package ru.betterstop.quizcard;
 
 import ru.betterstop.quizcard.Listeners.LoadCardListener;
 import ru.betterstop.quizcard.Listeners.SaveCardListener;
+import ru.betterstop.quizcard.settings.Setting;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 
 public class QuizCardBuilder extends CardWorker {
 
@@ -21,59 +21,34 @@ public class QuizCardBuilder extends CardWorker {
     }
 
     public void build() {
-        cardList = new ArrayList<QuizCard>();
-        frame = new JFrame("Создание карточек с вопросами");
+        frame = new JFrame(Setting.FORM_BUILDER_NAME);
         frame.getContentPane().add(BorderLayout.CENTER, createPanel());
         frame.setJMenuBar(createMenu());
         frame.setResizable(false);
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        frame.setSize(470, 600);
+        frame.setSize(Setting.FORM_BUILD_WIDTH, Setting.FORM_BUILD_HEIGHT);
         frame.setVisible(true);
     }
 
     private JPanel createPanel() {
         JPanel mainPanel = new JPanel();
-        Font bigFont = new Font("sanserif", Font.BOLD, 24);
-        question = new JTextArea(6, 20);
-        question.setLineWrap(true);
-        question.setWrapStyleWord(true);
-        question.setFont(bigFont);
-
-        JScrollPane qScroll = new JScrollPane(question);
-        qScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        qScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-
-        answer = new JTextArea(6, 20);
-        answer.setLineWrap(true);
-        answer.setWrapStyleWord(true);
-        answer.setFont(bigFont);
-
-        JScrollPane aScroll = new JScrollPane(answer);
-        aScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        aScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-
+        mainPanel.add(new JLabel(Setting.LABEL_QUESTION));
+        mainPanel.add(initTextArea(question, 6, 20));
+        mainPanel.add(new JLabel(Setting.LABEL_ANSWER));
+        mainPanel.add(initTextArea(answer, 6, 20));
         initButton();
-
-        JLabel qLabel = new JLabel("Вопрос:");
-        JLabel aLabel = new JLabel("Ответ:");
-
-        mainPanel.add(qLabel);
-        mainPanel.add(qScroll);
-        mainPanel.add(aLabel);
-        mainPanel.add(aScroll);
         mainPanel.add(newButton);
         mainPanel.add(saveButton);
         mainPanel.add(prevButton);
         mainPanel.add(nextButton);
-
         return mainPanel;
     }
 
     private void initButton() {
-        newButton = new JButton("Новая карточка");
-        saveButton = new JButton("Сохранить карточку");
-        prevButton = new JButton("Предыдущая карточка");
-        nextButton = new JButton("Следующая карточка");
+        newButton = new JButton(Setting.BUTTON_NEW);
+        saveButton = new JButton(Setting.BUTTON_SAVE);
+        prevButton = new JButton(Setting.BUTTON_PREV);
+        nextButton = new JButton(Setting.BUTTON_NEXT);
         prevButton.setEnabled(false);
         nextButton.setEnabled(false);
 
@@ -114,20 +89,18 @@ public class QuizCardBuilder extends CardWorker {
 
     private JMenuBar createMenu() {
         JMenuBar menuBar = new JMenuBar();
-        JMenu fileMenu = new JMenu("Файл");
-        JMenuItem newMenuItem = new JMenuItem("Создать новый набор карточек");
-        JMenuItem loadMenuItem = new JMenuItem("Загрузить набор карточек");
-        JMenuItem saveMenuItem = new JMenuItem("Сахранить набор карточек");
-        JMenuItem exitMenuItem = new JMenuItem("Закрыть");
+        JMenu fileMenu = new JMenu(Setting.MENU_FILE);
+        JMenuItem newMenuItem = new JMenuItem(Setting.MENU_CREATE);
+        JMenuItem loadMenuItem = new JMenuItem(Setting.MENU_LOAD);
+        JMenuItem saveMenuItem = new JMenuItem(Setting.MENU_SAVE);
+        JMenuItem exitMenuItem = new JMenuItem(Setting.MENU_EXIT);
 
         newMenuItem.addActionListener(listener -> {
             cardList.clear();
             initForm();
         });
-
         loadMenuItem.addActionListener(new LoadCardListener(this));
         saveMenuItem.addActionListener(new SaveCardListener(frame, cardList));
-
         exitMenuItem.addActionListener(listener -> {
             frame.setVisible(false);
             frame.dispose();

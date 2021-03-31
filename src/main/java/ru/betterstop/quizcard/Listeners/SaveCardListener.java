@@ -1,6 +1,7 @@
 package ru.betterstop.quizcard.Listeners;
 
 import ru.betterstop.quizcard.QuizCard;
+import ru.betterstop.quizcard.settings.Setting;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -25,12 +26,12 @@ public class SaveCardListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         JFileChooser fileSave = new JFileChooser();
-        FileNameExtensionFilter filter = new FileNameExtensionFilter("Набор карточек (*.qac)", "qac");
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(Setting.FILE_FILTER_NAME, Setting.FILE_FILTER_EXT);
         fileSave.setFileFilter(filter);
         if (fileSave.showSaveDialog(frame) == 0) {
             String fileName = fileSave.getSelectedFile().getAbsolutePath();
-            if (!fileName.endsWith(".qac")) {
-                fileName += ".qac";
+            if (!fileName.endsWith("." + Setting.FILE_FILTER_EXT)) {
+                fileName += "." + Setting.FILE_FILTER_EXT;
             }
             saveFile(new File(fileName));
         }
