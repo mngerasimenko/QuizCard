@@ -17,6 +17,8 @@ public class ShowAnswerListener extends FormPlayListeners {
                 play.getCurrentCard().setCountRight(-1);
             }
         play.getCheckAnswerButton().setEnabled(false);
+        play.getAnswer().setEnabled(false);
         play.getAnswer().setText("");
+        play.getNextButton().requestFocus();
     }
 }

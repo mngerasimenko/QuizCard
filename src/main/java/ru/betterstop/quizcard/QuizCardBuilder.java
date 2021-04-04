@@ -35,7 +35,9 @@ public class QuizCardBuilder extends CardWorker {
         mainPanel.add(new JLabel(Setting.LABEL_QUESTION));
         mainPanel.add(initTextArea(question, 6, 20));
         mainPanel.add(new JLabel(Setting.LABEL_ANSWER));
-        mainPanel.add(initTextArea(answer, 6, 20));
+        //mainPanel.add(initTextArea(answer, 6, 20));
+        initTextField(answer, 21);
+        mainPanel.add(answer);
         initButton();
         mainPanel.add(newButton);
         mainPanel.add(saveButton);

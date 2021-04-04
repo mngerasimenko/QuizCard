@@ -12,7 +12,7 @@ public abstract class CardWorker {
     protected ArrayList<QuizCard> cardList = new ArrayList<>();
     protected JFrame frame;
     protected JTextArea question = new JTextArea();
-    protected JTextArea answer = new JTextArea();
+    protected JTextField answer = new JTextField();
 
     protected JButton createButton(String buttonName, ActionListener listener) {
         JButton button = new JButton(buttonName);
@@ -33,6 +33,12 @@ public abstract class CardWorker {
         return scrollPane;
     }
 
+    protected void initTextField(JTextField textField, int col) {
+        Font bigFont = new Font(Setting.FONT_NAME, Font.BOLD, 24);
+        textField.setColumns(col);
+        textField.setFont(bigFont);
+    }
+
     public abstract void initForm();
 
     public JFrame getFrame() {
@@ -47,7 +53,7 @@ public abstract class CardWorker {
         return question;
     }
 
-    public JTextArea getAnswer() {
+    public JTextField getAnswer() {
         return answer;
     }
 }

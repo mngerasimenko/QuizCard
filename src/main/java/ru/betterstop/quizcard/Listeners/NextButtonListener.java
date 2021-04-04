@@ -18,8 +18,14 @@ public class NextButtonListener extends FormPlayListeners {
 
     public static void nextCard(QuizCardPlayer play) {
         play.getAnswer().setForeground(Color.BLACK);
-        if (play.showCard()) play.getCheckAnswerButton().setEnabled(true);
+        play.getShowAnswerButton().setEnabled(true);
+        if (play.showCard()) {
+            play.getCheckAnswerButton().setEnabled(true);
+        } else {
+            play.getShowAnswerButton().setEnabled(false);
+        }
         play.getAnswer().setText("");
+        play.getAnswer().setEnabled(true);
         play.getAnswer().requestFocus();
         play.setOk(false);
     }

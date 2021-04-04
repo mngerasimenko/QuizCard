@@ -3,6 +3,7 @@ package ru.betterstop.quizcard.Listeners;
 import ru.betterstop.quizcard.QuizCardPlayer;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -16,11 +17,10 @@ public class AnswerKeyListener implements KeyListener {
     @Override
     public void keyTyped(KeyEvent e) {
         char c = e.getKeyChar();
-        JTextArea answer = play.getAnswer();
+        JTextField answer = play.getAnswer();
         if (c == '\n') {
                 if (!play.isOk()) {
                     String str = answer.getText();
-                    str = str.substring(0, str.length() - 1);
                     answer.setText(str);
                     CheckAnswerListener.checkAnswer(play);
                 } else {
@@ -31,7 +31,10 @@ public class AnswerKeyListener implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-
+        if (!play.isOk()) {
+            play.getQuestion().setText(play.getCurrentCard().getQuestion());
+            play.getAnswer().setForeground(Color.BLACK);
+        }
     }
 
     @Override

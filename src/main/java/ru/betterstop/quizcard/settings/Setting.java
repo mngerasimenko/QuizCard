@@ -8,7 +8,7 @@ public interface Setting {
     String FORM_BUILDER_NAME = "Создание карточек с вопросами";
     int FORM_PLAY_HEIGHT = 350;
     int FORM_PLAY_WIDTH = 600;
-    int FORM_BUILD_HEIGHT = 600;
+    int FORM_BUILD_HEIGHT = 500;
     int FORM_BUILD_WIDTH = 470;
 
     String FONT_NAME = "sanserif";

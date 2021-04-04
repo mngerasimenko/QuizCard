@@ -22,23 +22,39 @@ public class CheckAnswerListener extends FormPlayListeners {
 
     public static void checkAnswer(QuizCardPlayer play) {
         QuizCard card = play.getCurrentCard();
-        JTextArea aTextArea = play.getAnswer();
-        String answer = aTextArea.getText();
+        JTextField textField = play.getAnswer();
+        String answer = textField.getText();
+        answer = answer.toLowerCase();
+        answer = removeWhiteSpace(answer);
+        play.getAnswer().setText(answer);
         JTextArea qTextArea = play.getQuestion();
         qTextArea.setText(card.getQuestion());
         if (card.getAnswer().equals(answer)) {
             card.setCountRight(card.getCountRight() + 1);
-            aTextArea.setForeground(Color.GREEN);
+            textField.setForeground(Color.GREEN);
             qTextArea.setText(qTextArea.getText() + "\n" + Setting.CORRECT_ANSWER);
             play.getCheckAnswerButton().setEnabled(false);
             play.setOk(true);
             if (card.getCountRight() == Setting.COUNT_RIGHT) {
                 play.getCardList().remove(play.getCurrentCardId());
             }
+            play.getShowAnswerButton().setEnabled(false);
         } else {
             card.setCountRight(-1);
-            aTextArea.setForeground(Color.RED);
+            textField.setForeground(Color.RED);
             qTextArea.setText(qTextArea.getText() + "\n" + Setting.ERROR_ANSWER);
         }
+    }
+
+    private static String removeWhiteSpace(String inputString) {
+        String[] str = inputString.split(" ");
+        inputString = "";
+        for (String s: str) {
+            s.replaceAll("\\s+","");
+            if (!s.equals("")) {
+                inputString += s + " ";
+            }
+        }
+        return inputString.trim();
     }
 }

@@ -30,8 +30,11 @@ public class QuizCardPlayer extends CardWorker {
         checkAnswerButton = createButton(Setting.BUTTON_CHECK, new CheckAnswerListener(this));
         showAnswerButton = createButton(Setting.BUTTON_SHOW, new ShowAnswerListener(this));
 
+        mainPanel.add(new JLabel(Setting.LABEL_QUESTION));
         mainPanel.add(initTextArea(question, 3,25));
-        mainPanel.add(initTextArea(answer, 3,25));
+        mainPanel.add(new JLabel(Setting.LABEL_ANSWER));
+        initTextField(answer, 26);
+        mainPanel.add(answer);
         question.setEditable(false);
         answer.addKeyListener(new AnswerKeyListener(this));
 
@@ -86,6 +89,9 @@ public class QuizCardPlayer extends CardWorker {
             nextButton.setEnabled(true);
             showAnswerButton.setEnabled(true);
             checkAnswerButton.setEnabled(true);
+            answer.setEditable(true);
+            answer.setText("");
+            answer.requestFocus();
         }
     }
 
@@ -98,7 +104,18 @@ public class QuizCardPlayer extends CardWorker {
             answer.setEditable(false);
             return false;
         }
-        currentCardId = new Random().nextInt(cardList.size());
+        if (cardList.size() == 1) {
+            currentCardId = 0;
+        } else {
+            boolean nextCard = true;
+            while (nextCard) {
+                int randId = new Random().nextInt(cardList.size());
+                if (randId != currentCardId) {
+                    currentCardId = randId;
+                    nextCard = false;
+                }
+            }
+        }
         currentCard = cardList.get(currentCardId);
         question.setText(currentCard.getQuestion());
         return true;
@@ -145,10 +162,6 @@ public class QuizCardPlayer extends CardWorker {
     }
 */
 
-    public JTextArea getAnswer() {
-        return answer;
-    }
-
     public QuizCard getCurrentCard() {
         return currentCard;
     }
@@ -163,6 +176,10 @@ public class QuizCardPlayer extends CardWorker {
 
     public JButton getCheckAnswerButton() {
         return checkAnswerButton;
+    }
+
+    public JButton getShowAnswerButton() {
+        return showAnswerButton;
     }
 
     public boolean isOk() {
