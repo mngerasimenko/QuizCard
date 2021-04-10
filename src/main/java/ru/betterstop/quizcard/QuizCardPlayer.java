@@ -14,7 +14,7 @@ public class QuizCardPlayer extends CardWorker {
     private JButton nextButton;
     private JButton showAnswerButton;
     private JButton checkAnswerButton;
-    private boolean isOk = false;
+    private boolean answerCorrect = false;
     //private boolean finish = false;
 
     public static void main(String[] args) {
@@ -182,12 +182,12 @@ public class QuizCardPlayer extends CardWorker {
         return showAnswerButton;
     }
 
-    public boolean isOk() {
-        return isOk;
+    public boolean isAnswerCorrect() {
+        return answerCorrect;
     }
 
-    public void setOk(boolean ok) {
-        isOk = ok;
+    public void setAnswerCorrect(boolean answerCorrect) {
+        this.answerCorrect = answerCorrect;
     }
 
 }

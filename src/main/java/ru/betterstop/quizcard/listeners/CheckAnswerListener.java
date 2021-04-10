@@ -34,7 +34,7 @@ public class CheckAnswerListener extends FormPlayListeners {
             textField.setForeground(Color.GREEN);
             qTextArea.setText(qTextArea.getText() + "\n" + Setting.CORRECT_ANSWER);
             play.getCheckAnswerButton().setEnabled(false);
-            play.setOk(true);
+            play.setAnswerCorrect(true);
             if (card.getCountRight() == Setting.COUNT_RIGHT) {
                 play.getCardList().remove(play.getCurrentCardId());
             }

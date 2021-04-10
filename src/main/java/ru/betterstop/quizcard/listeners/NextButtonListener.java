@@ -27,6 +27,6 @@ public class NextButtonListener extends FormPlayListeners {
         play.getAnswer().setText("");
         play.getAnswer().setEnabled(true);
         play.getAnswer().requestFocus();
-        play.setOk(false);
+        play.setAnswerCorrect(false);
     }
 }

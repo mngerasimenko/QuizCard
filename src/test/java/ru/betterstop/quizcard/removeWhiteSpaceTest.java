@@ -16,6 +16,10 @@ public class removeWhiteSpaceTest extends TestCase{
         result = CheckAnswerListener.removeWhiteSpace("");
         assertEquals(expResult, result);
 
+        expResult = "";
+        result = CheckAnswerListener.removeWhiteSpace("  ");
+        assertEquals(expResult, result);
+
         expResult = "test";
         result = CheckAnswerListener.removeWhiteSpace("    test");
         assertEquals(expResult, result);
@@ -31,6 +35,10 @@ public class removeWhiteSpaceTest extends TestCase{
         assertEquals(expResult, result);
 
         result = CheckAnswerListener.removeWhiteSpace("   \n     test\n test\n");
+        assertEquals(expResult, result);
+
+        expResult = "test test 1";
+        result = CheckAnswerListener.removeWhiteSpace( "        test    \n test \n       1   ");
         assertEquals(expResult, result);
     }
 }

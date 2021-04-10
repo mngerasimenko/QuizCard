@@ -19,7 +19,7 @@ public class AnswerKeyListener implements KeyListener {
         char c = e.getKeyChar();
         JTextField answer = play.getAnswer();
         if (c == '\n') {
-                if (!play.isOk()) {
+                if (!play.isAnswerCorrect()) {
                     String str = answer.getText();
                     answer.setText(str);
                     CheckAnswerListener.checkAnswer(play);
@@ -31,7 +31,7 @@ public class AnswerKeyListener implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (!play.isOk()) {
+        if (!play.isAnswerCorrect()) {
             play.getQuestion().setText(play.getCurrentCard().getQuestion());
             play.getAnswer().setForeground(Color.BLACK);
         }
