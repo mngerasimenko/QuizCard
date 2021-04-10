@@ -46,11 +46,11 @@ public class CheckAnswerListener extends FormPlayListeners {
         }
     }
 
-    private static String removeWhiteSpace(String inputString) {
+    public static String removeWhiteSpace(String inputString) {
+        inputString = inputString.replaceAll("\n"," ").replaceAll("\t"," ");
         String[] str = inputString.split(" ");
         inputString = "";
         for (String s: str) {
-            s.replaceAll("\\s+","");
             if (!s.equals("")) {
                 inputString += s + " ";
             }
