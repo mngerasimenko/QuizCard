@@ -1,2 +1,2 @@
 # QuizCard
-Карточки с вопросами и ответами
+Cards with questions and answers.

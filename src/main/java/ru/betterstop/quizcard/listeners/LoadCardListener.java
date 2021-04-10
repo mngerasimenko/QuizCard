@@ -1,4 +1,4 @@
-package ru.betterstop.quizcard.Listeners;
+package ru.betterstop.quizcard.listeners;
 
 import ru.betterstop.quizcard.CardWorker;
 import ru.betterstop.quizcard.QuizCard;

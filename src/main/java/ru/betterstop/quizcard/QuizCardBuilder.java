@@ -1,7 +1,7 @@
 package ru.betterstop.quizcard;
 
-import ru.betterstop.quizcard.Listeners.LoadCardListener;
-import ru.betterstop.quizcard.Listeners.SaveCardListener;
+import ru.betterstop.quizcard.listeners.LoadCardListener;
+import ru.betterstop.quizcard.listeners.SaveCardListener;
 import ru.betterstop.quizcard.settings.Setting;
 
 import javax.swing.*;
@@ -35,31 +35,19 @@ public class QuizCardBuilder extends CardWorker {
         mainPanel.add(new JLabel(Setting.LABEL_QUESTION));
         mainPanel.add(initTextArea(question, 6, 20));
         mainPanel.add(new JLabel(Setting.LABEL_ANSWER));
-        //mainPanel.add(initTextArea(answer, 6, 20));
         initTextField(answer, 21);
         mainPanel.add(answer);
-        initButton();
-        mainPanel.add(newButton);
-        mainPanel.add(saveButton);
-        mainPanel.add(prevButton);
-        mainPanel.add(nextButton);
+        initButton(mainPanel);
         return mainPanel;
     }
 
-    private void initButton() {
-        newButton = new JButton(Setting.BUTTON_NEW);
-        saveButton = new JButton(Setting.BUTTON_SAVE);
-        prevButton = new JButton(Setting.BUTTON_PREV);
-        nextButton = new JButton(Setting.BUTTON_NEXT);
-        prevButton.setEnabled(false);
-        nextButton.setEnabled(false);
-
-        newButton.addActionListener(listener -> {
+    private void initButton(JPanel mainPanel) {
+        newButton = createButton(Setting.BUTTON_NEW, listener -> {
             clearCard();
             itemCard = cardList.size();
             nextButton.setEnabled(false);
         });
-        saveButton.addActionListener(listener -> {
+        saveButton = createButton(Setting.BUTTON_SAVE, listener -> {
             if (cardList.size() == itemCard) {
                 QuizCard card = new QuizCard(question.getText(), answer.getText());
                 cardList.add(card);
@@ -71,15 +59,14 @@ public class QuizCardBuilder extends CardWorker {
                 cardList.get(itemCard).setQuestion(question.getText());
             }
         });
-        prevButton.addActionListener(listener -> {
+        prevButton = createButton(Setting.BUTTON_PREV, listener -> {
             itemCard--;
             QuizCard card = cardList.get(itemCard);
             showCard(card);
-            nextButton.setEnabled(true);
+            nextButton.setEnabled(itemCard < cardList.size() - 1);
             if (itemCard == 0) prevButton.setEnabled(false);
-
         });
-        nextButton.addActionListener(listener -> {
+        nextButton = createButton(Setting.BUTTON_NEXT, listener -> {
             cardList.get(itemCard).setAnswer(answer.getText());
             cardList.get(itemCard).setQuestion(question.getText());
             QuizCard card = cardList.get(++itemCard);
@@ -87,15 +74,21 @@ public class QuizCardBuilder extends CardWorker {
             prevButton.setEnabled(true);
             if (cardList.size() == itemCard + 1) nextButton.setEnabled(false);
         });
+        mainPanel.add(newButton);
+        mainPanel.add(saveButton);
+        mainPanel.add(prevButton);
+        mainPanel.add(nextButton);
+        newButton.setEnabled(true);
+        saveButton.setEnabled(true);
     }
 
-    private JMenuBar createMenu() {
+    public JMenuBar createMenu() {
         JMenuBar menuBar = new JMenuBar();
         JMenu fileMenu = new JMenu(Setting.MENU_FILE);
         JMenuItem newMenuItem = new JMenuItem(Setting.MENU_CREATE);
         JMenuItem loadMenuItem = new JMenuItem(Setting.MENU_LOAD);
         JMenuItem saveMenuItem = new JMenuItem(Setting.MENU_SAVE);
-        JMenuItem exitMenuItem = new JMenuItem(Setting.MENU_EXIT);
+        JMenuItem exitMenuItem = new JMenuItem(Setting.MENU_CLOSE);
 
         newMenuItem.addActionListener(listener -> {
             cardList.clear();

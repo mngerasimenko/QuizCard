@@ -40,6 +40,7 @@ public abstract class CardWorker {
     }
 
     public abstract void initForm();
+    public abstract JMenuBar createMenu();
 
     public JFrame getFrame() {
         return frame;

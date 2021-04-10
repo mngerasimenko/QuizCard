@@ -1,6 +1,6 @@
 package ru.betterstop.quizcard;
 
-import ru.betterstop.quizcard.Listeners.*;
+import ru.betterstop.quizcard.listeners.*;
 import ru.betterstop.quizcard.settings.Setting;
 
 import javax.swing.*;
@@ -25,13 +25,8 @@ public class QuizCardPlayer extends CardWorker {
     public void checkingAnswers() {
         frame = new JFrame(Setting.FORM_PLAY_NAME);
         JPanel mainPanel = new JPanel();
-
-        nextButton = createButton(Setting.BUTTON_NEXT, new NextButtonListener(this));
-        checkAnswerButton = createButton(Setting.BUTTON_CHECK, new CheckAnswerListener(this));
-        showAnswerButton = createButton(Setting.BUTTON_SHOW, new ShowAnswerListener(this));
-
         mainPanel.add(new JLabel(Setting.LABEL_QUESTION));
-        mainPanel.add(initTextArea(question, 3,25));
+        mainPanel.add(initTextArea(question, 3, 25));
         mainPanel.add(new JLabel(Setting.LABEL_ANSWER));
         initTextField(answer, 26);
         mainPanel.add(answer);
@@ -39,6 +34,9 @@ public class QuizCardPlayer extends CardWorker {
         answer.addKeyListener(new AnswerKeyListener(this));
 
         JPanel buttonPanel = new JPanel();
+        nextButton = createButton(Setting.BUTTON_NEXT, new NextButtonListener(this));
+        checkAnswerButton = createButton(Setting.BUTTON_CHECK, new CheckAnswerListener(this));
+        showAnswerButton = createButton(Setting.BUTTON_SHOW, new ShowAnswerListener(this));
         buttonPanel.add(checkAnswerButton);
         buttonPanel.add(nextButton);
         buttonPanel.add(showAnswerButton);
@@ -50,12 +48,13 @@ public class QuizCardPlayer extends CardWorker {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
         frame.setVisible(true);
+        initForm();
     }
 
-    private JMenuBar createMenu() {
+    public JMenuBar createMenu() {
 
         JMenuBar menuBar = new JMenuBar();
-        JMenu fileMenu= new JMenu(Setting.MENU_FILE);
+        JMenu fileMenu = new JMenu(Setting.MENU_FILE);
 
         JMenuItem loadMenuItem = new JMenuItem(Setting.MENU_LOAD);
         loadMenuItem.addActionListener(new LoadCardListener(this));
@@ -82,6 +81,7 @@ public class QuizCardPlayer extends CardWorker {
         nextButton.setEnabled(false);
         showAnswerButton.setEnabled(false);
         checkAnswerButton.setEnabled(false);
+        answer.setEditable(false);
         if (cardList.size() != 0) {
             currentCardId = 0;
             currentCard = cardList.get(currentCardId);

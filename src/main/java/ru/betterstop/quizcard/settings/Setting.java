@@ -27,6 +27,7 @@ public interface Setting {
     String MENU_LOAD = "Загрузить набор карточек";
     String MENU_SAVE = "Сохранить набор карточек";
     String MENU_CREATE = "Создать новый набор карточек";
+    String MENU_CLOSE = "Закрыть";
     String MENU_EXIT = "Выход";
 
     String CORRECT_ANSWER = "Правильно!";
